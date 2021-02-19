@@ -1,8 +1,10 @@
 # main.py
 
 import os
-from discord.ext import commands
+
 import discord
+
+from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv(dotenv_path="config")
