@@ -21,6 +21,7 @@ async def on_ready():
 async def coucou(ctx):
     await ctx.send("Coucou <@&725785724741484585> !")
 
+@bot.command()
 async def serverInfo(ctx):
     server = ctx.guild
     numberOfTextChannels = len(server.text_channels)
@@ -32,10 +33,12 @@ async def serverInfo(ctx):
     
     await ctx.send(message)
 
+@bot.command()
 async def recherche(ctx, NbPersonne, Attente):
 
     await ctx.send(f"Yo <@&725785724741484585>, je suis avec {int(NbPersonne)} personnes et nous vous attendrons pendant {int(Attente)} minutes votre message alors bougez-vous !")
 
+@bot.command()
 async def jarrive(ctx, Heure, Minutes):
 
     await ctx.send(f"Yo <@&725785724741484585>, j'arrive vers {int(Heure)} h {int(Minutes)} !")

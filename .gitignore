@@ -1,2 +1,6 @@
 
 config
+
+.env/Lib/site-packages/__pycache__/
+
+*.pyc
