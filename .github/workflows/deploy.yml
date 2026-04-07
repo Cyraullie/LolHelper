@@ -12,7 +12,6 @@ jobs:
     steps:
       - name: Setup SSH
         run: |
-          set -e
           echo "PORT=${{ secrets.PORT }}"
           echo "HOST=${{ secrets.HOST }}"
           mkdir -p ~/.ssh
@@ -20,11 +19,10 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
-          ssh -p ${{ secrets.PORT }} ${{ secrets.USER }}@${{ secrets.HOST }} << 'EOF'
+          ssh -p ${{ secrets.PORT }} ${{ secrets.USER }}@${{ secrets.HOST }} ""
             cd ~/Projects/LolHelper
 
             git pull origin main
             source venv/bin/activate
-            pip install -r requirements.txt
             sudo systemctl restart lolhelper
-          EOF
+          "
