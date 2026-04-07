@@ -24,7 +24,7 @@ jobs:
 
       - name : Deploy
         run: |
-          ssh -p ${{ secrets.PORT }} ${{ secrets.USER }}@${{ secrets.HOST }} "
+          ssh -p ${{ secrets.PORT }} ${{ secrets.USER }}@${{ secrets.HOST }} " 
             cd ~/Projects/LolHelper &&
             git pull origin main &&
             source venv/bin/activate && 
