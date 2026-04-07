@@ -22,7 +22,7 @@ async def on_ready():
 
 @bot.command()
 async def coucou(ctx):
-    await ctx.send("Coucou salope !")
+    await ctx.send("Coucou salope  !")
 
 @bot.command()
 async def serverInfo(ctx):
