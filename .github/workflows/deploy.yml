@@ -13,14 +13,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Debug
-        run: |
-          echo "HOME=$HOME"
-          pwd
-          whoami
-          ls -la
-
+        
       - name: Setup SSH
         run: |
           set -ex
