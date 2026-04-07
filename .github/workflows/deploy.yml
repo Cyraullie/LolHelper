@@ -18,7 +18,7 @@ jobs:
         run: |
           set -ex
           mkdir -p $HOME/.ssh
-          printf "%s" "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/id_ed25519
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/id_ed25519
           chmod 600 $HOME/.ssh/id_ed25519
           ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> $HOME/.ssh/known_hosts
 
