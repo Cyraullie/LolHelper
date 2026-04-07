@@ -16,10 +16,9 @@ jobs:
 
       - name: Setup SSH
         run: |
-          echo "PORT=${{ secrets.PORT }}"
-          echo "HOST=${{ secrets.HOST }}"
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "*** multi-lignes ***" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
