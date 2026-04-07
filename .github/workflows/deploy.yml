@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup SSH
         run: |
           set -ex
@@ -26,7 +26,6 @@ jobs:
         run: |
           ssh -p ${{ secrets.PORT }} ${{ secrets.USER }}@${{ secrets.HOST }} "
             cd ~/Projects/LolHelper &&
-
             git pull origin main &&
             source venv/bin/activate && 
             sudo systemctl restart lolhelper 
