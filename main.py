@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 intents = discord.Intents.default()
 intents.message_content = True
 
-load_dotenv(dotenv_path=".env")
+load_dotenv(dotenv_path="config")
 bot = commands.Bot(command_prefix="*", description="test de merde", intents=intents)
 
 @bot.event
