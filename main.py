@@ -4,6 +4,7 @@ import os
 import datetime
 import discord
 import json
+import requests
 
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
