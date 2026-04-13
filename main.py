@@ -17,8 +17,8 @@ bot = commands.Bot(command_prefix="*", description="test de merde", intents=inte
 
 API_KEY = os.getenv("RIOT_API_KEY")
 
-CHANNEL_ID = os.getenv("CHANNEL_IDRIOT_API_KEY")  # ton salon
-ROLE_ID = os.getenv("ROLE_ID")  # ton rôle
+CHANNEL_ID = int(os.getenv("CHANNEL_IDRIOT_API_KEY"))  # ton salon
+ROLE_ID = int(os.getenv("ROLE_ID"))  # ton rôle
 
 NOTIFIED_FILE = "notified_clash.json"
 
