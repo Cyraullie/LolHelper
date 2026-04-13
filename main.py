@@ -9,6 +9,7 @@ import requests
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from datetime import datetime, UTC
+from zoneinfo import ZoneInfo
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -20,6 +21,7 @@ API_KEY = os.getenv("RIOT_API_KEY")
 
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))  # ton salon
 ROLE_ID = int(os.getenv("ROLE_ID"))  # ton rôle
+PARIS_TZ = ZoneInfo("Europe/Paris")
 
 NOTIFIED_FILE = "notified_clash.json"
 
@@ -85,7 +87,7 @@ def get_clash_tournaments():
 
 # 🧠 conversion timestamp
 def ts_to_date(ts):
-    return datetime.fromtimestamp(ts / 1000, tz=UTC)
+    return datetime.fromtimestamp(ts / 1000, tz=PARIS_TZ)
 
 
 # 🚀 embed stylé
@@ -99,8 +101,8 @@ def build_embed(tournoi, schedule):
         color=0xff0000
     )
 
-    embed.add_field(name="📅 Début", value=start.strftime("%Y-%m-%d %H:%M UTC"), inline=False)
-    embed.add_field(name="📝 Inscription", value=reg.strftime("%Y-%m-%d %H:%M UTC"), inline=False)
+    embed.add_field(name="📅 Début", value=start.strftime("%Y-%m-%d à %H:%M"), inline=False)
+    embed.add_field(name="📝 Inscription", value=reg.strftime("%Y-%m-%d à %H:%M"), inline=False)
     embed.add_field(name="🆔 ID Tournoi", value=str(tournoi.get("id")), inline=True)
     embed.add_field(name="🎮 Theme", value=str(tournoi.get("themeId")), inline=True)
 
