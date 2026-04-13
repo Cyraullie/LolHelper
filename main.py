@@ -1,8 +1,9 @@
 # main.py
 
 import os
-
+import datetime
 import discord
+import json
 
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -13,11 +14,24 @@ intents.message_content = True
 load_dotenv(dotenv_path="config")
 bot = commands.Bot(command_prefix="*", description="test de merde", intents=intents)
 
-@bot.event
-async def on_ready():
-    print('Le bot est prêt')
-    print('------')
+API_KEY = os.getenv("RIOT_API_KEY")
 
+CHANNEL_ID = os.getenv("CHANNEL_IDRIOT_API_KEY")  # ton salon
+ROLE_ID = os.getenv("ROLE_ID")  # ton rôle
+
+NOTIFIED_FILE = "notified_clash.json"
+
+def load_notified():
+    if not os.path.exists(NOTIFIED_FILE):
+        return set()
+
+    with open(NOTIFIED_FILE, "r") as f:
+        return set(json.load(f))
+
+
+def save_notified(data):
+    with open(NOTIFIED_FILE, "w") as f:
+        json.dump(list(data), f)
 
 
 @bot.command()
@@ -38,15 +52,93 @@ async def serverInfo(ctx):
 
 @bot.command()
 async def recherche(ctx, NbPersonne, Attente):
-
-    await ctx.send(f"Yo <@&725785724741484585>, je suis avec {int(NbPersonne)} personnes et nous vous attendrons pendant {int(Attente)} minutes votre message alors bougez-vous !")
+    await ctx.send(f"Yo <@&{ROLE_ID}>, je suis avec {int(NbPersonne)} personnes et nous vous attendrons pendant {int(Attente)} minutes votre message alors bougez-vous !")
 
 @bot.command()
 async def jarrive(ctx, Heure, Minutes):
-
-    await ctx.send(f"Yo <@&725785724741484585>, j'arrive vers {int(Heure)} h {int(Minutes)} !")
-
+    await ctx.send(f"Yo <@&{ROLE_ID}>, j'arrive vers {int(Heure)} h {int(Minutes)} !")
 
 
+# 🧠 mémoire des clash déjà annoncés
+notified_clash_ids = load_notified()
+
+# 🔎 récupérer les clashs
+def get_clash_tournaments():
+    url = f"https://euw1.api.riotgames.com/lol/clash/v1/tournaments"
+    headers = {"X-Riot-Token": API_KEY}
+
+    r = requests.get(url, headers=headers)
+
+    if r.status_code != 200:
+        print("Erreur API:", r.text)
+        return []
+
+    data = r.json()
+
+    if not isinstance(data, list):
+        return []
+
+    return data
+
+
+# 🧠 conversion timestamp
+def ts_to_date(ts):
+    return datetime.fromtimestamp(ts / 1000, tz=UTC)
+
+
+# 🚀 embed stylé
+def build_embed(tournoi, schedule):
+    start = ts_to_date(schedule["startTime"])
+    reg = ts_to_date(schedule["registrationTime"])
+
+    embed = discord.Embed(
+        title="🔥 Clash League of Legends",
+        description=f"**Mode : {tournoi.get('nameKey')}**",
+        color=0xff0000
+    )
+
+    embed.add_field(name="📅 Début", value=start.strftime("%Y-%m-%d %H:%M UTC"), inline=False)
+    embed.add_field(name="📝 Inscription", value=reg.strftime("%Y-%m-%d %H:%M UTC"), inline=False)
+    embed.add_field(name="🆔 ID Tournoi", value=str(tournoi.get("id")), inline=True)
+    embed.add_field(name="🎮 Theme", value=str(tournoi.get("themeId")), inline=True)
+
+    embed.set_footer(text="Riot Games Clash System")
+
+    return embed
+
+
+# 🔁 loop toutes les 30 minutes
+@tasks.loop(minutes=30)
+async def clash_checker():
+    tournaments = get_clash_tournaments()
+
+    channel = bot.get_channel(CHANNEL_ID)
+    role_ping = f"<@&{ROLE_ID}>"
+
+    for tournoi in tournaments:
+        for schedule in tournoi.get("schedule", []):
+
+            clash_id = schedule.get("id")
+
+            if clash_id in notified_clash_ids:
+                continue
+
+            start_time = ts_to_date(schedule["startTime"])
+
+            if start_time > datetime.now(UTC):
+                embed = build_embed(tournoi, schedule)
+
+                if channel:
+                    await channel.send(content=role_ping, embed=embed)
+
+                notified_clash_ids.add(clash_id)
+                save_notified(notified_clash_ids)
+
+
+@bot.event
+async def on_ready():
+    print('Le bot est prêt')
+    print('------')
+    clash_checker.start()
 
 bot.run(os.getenv("TOKEN"))
