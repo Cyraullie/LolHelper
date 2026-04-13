@@ -136,6 +136,22 @@ async def clash_checker():
                 save_notified(notified_clash_ids)
 
 
+# 📅 commande debug
+@bot.command()
+async def clash(ctx):
+    tournaments = get_clash_tournaments()
+
+    if not tournaments:
+        await ctx.send("❌ Aucun Clash trouvé.")
+        return
+
+    msg = "📅 Clash disponibles :\n"
+    for t in tournaments:
+        msg += f"- {t.get('nameKey')} (ID {t.get('id')})\n"
+
+    await ctx.send(msg)
+
+
 @bot.event
 async def on_ready():
     print('Le bot est prêt')
